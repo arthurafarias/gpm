@@ -253,16 +253,16 @@
     <div class="sidebar-section">
       <div class="sidebar-label">Navigation</div>
       <a class="sidebar-link" id="nav-dashboard" onclick="navigate('dashboard')"><i class="bi bi-grid-1x2"></i> Dashboard</a>
-      <a class="sidebar-link" id="nav-repos" onclick="navigate('repos')"><i class="bi bi-folder2"></i> Repositories</a>
+      <a class="sidebar-link" id="nav-repos" onclick="navigate('repos')"><i class="bi bi-folder2"></i> Projects</a>
       <a class="sidebar-link" id="nav-issues" onclick="navigate('myissues')"><i class="bi bi-circle-dot"></i> My Issues</a>
       <a class="sidebar-link" id="nav-prs" onclick="navigate('myprs')"><i class="bi bi-git"></i> Pull Requests</a>
     </div>
     <div class="sidebar-section" id="repoNavSection" style="display:none;">
-      <div class="sidebar-label" id="repoNavLabel">Repository</div>
+      <div class="sidebar-label" id="repoNavLabel">Project</div>
       <a class="sidebar-link" id="nav-repo-issues" onclick="navigateRepoTab('issues')"><i class="bi bi-circle-dot"></i> Issues <span class="badge badge-count" id="nav-count-issues">0</span></a>
       <a class="sidebar-link" id="nav-repo-prs" onclick="navigateRepoTab('prs')"><i class="bi bi-git"></i> Pull Requests <span class="badge badge-count" id="nav-count-prs">0</span></a>
       <a class="sidebar-link" id="nav-repo-boards" onclick="navigateRepoTab('boards')"><i class="bi bi-kanban"></i> Project Boards</a>
-      <a class="sidebar-link" id="nav-repo-milestones" onclick="navigateRepoTab('milestones')"><i class="bi bi-signpost-2"></i> Milestones</a>
+      <!-- <a class="sidebar-link" id="nav-repo-milestones" onclick="navigateRepoTab('milestones')"><i class="bi bi-signpost-2"></i> Milestones</a> -->
       <a class="sidebar-link" id="nav-repo-labels" onclick="navigateRepoTab('labels')"><i class="bi bi-tags"></i> Labels</a>
       <a class="sidebar-link" id="nav-repo-settings" onclick="navigateRepoTab('settings')"><i class="bi bi-gear"></i> Settings</a>
     </div>
@@ -509,14 +509,14 @@ function renderDashboard() {
     <div style="max-width:900px;">
       <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem;">
         <h1 style="font-size:1.4rem; font-weight:700; margin:0;">Dashboard</h1>
-        <button class="btn-primary-custom" onclick="showNewRepoModal()"><i class="bi bi-plus-lg"></i> New Repository</button>
+        <button class="btn-primary-custom" onclick="showNewRepoModal()"><i class="bi bi-plus-lg"></i> New Project</button>
       </div>
 
       <!-- Stats -->
       <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:2rem;">
         <div class="stat-card clickable" onclick="navigate('repos')">
           <div class="stat-value" style="color:var(--accent-blue)">${repos.length}</div>
-          <div class="stat-label"><i class="bi bi-folder2"></i> Repositories</div>
+          <div class="stat-label"><i class="bi bi-folder2"></i> Projects</div>
         </div>
         <div class="stat-card clickable" onclick="navigate('myissues')">
           <div class="stat-value" style="color:var(--accent-green)">${openIssues}</div>
@@ -536,15 +536,15 @@ function renderDashboard() {
         <!-- Recent Repos -->
         <div>
           <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;">
-            <h2 style="font-size:1rem; font-weight:600; margin:0;">Recent Repositories</h2>
+            <h2 style="font-size:1rem; font-weight:600; margin:0;">Recent Projects</h2>
             <a onclick="navigate('repos')" style="color:var(--accent-blue); font-size:13px; cursor:pointer;">View all →</a>
           </div>
           ${repos.length === 0 ? `
             <div class="empty-state">
               <i class="bi bi-folder-plus"></i>
-              <h4>No repositories yet</h4>
-              <p style="margin-bottom:1rem;">Create your first repository to get started</p>
-              <button class="btn-primary-custom" onclick="showNewRepoModal()"><i class="bi bi-plus-lg"></i> New Repository</button>
+              <h4>No projects yet</h4>
+              <p style="margin-bottom:1rem;">Create your first project to get started</p>
+              <button class="btn-primary-custom" onclick="showNewRepoModal()"><i class="bi bi-plus-lg"></i> New Project</button>
             </div>` : repos.slice(0,5).map(r => {
               const rIssues = DB.getIssuesByRepo(r.id, 'issue').filter(i=>i.state==='open');
               const rPRs = DB.getIssuesByRepo(r.id, 'pr').filter(i=>i.state==='open');
@@ -596,11 +596,11 @@ function renderRepos() {
   renderContent(`
     <div style="max-width:860px;">
       <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem;">
-        <h1 style="font-size:1.4rem; font-weight:700; margin:0;">Repositories</h1>
-        <button class="btn-primary-custom" onclick="showNewRepoModal()"><i class="bi bi-plus-lg"></i> New Repository</button>
+        <h1 style="font-size:1.4rem; font-weight:700; margin:0;">Projects</h1>
+        <button class="btn-primary-custom" onclick="showNewRepoModal()"><i class="bi bi-plus-lg"></i> New Project</button>
       </div>
-      <input type="text" id="repoFilter" class="form-control-custom" placeholder="Find a repository..." style="margin-bottom:1.5rem;" onkeyup="renderRepos()" value="${q}">
-      ${filtered.length === 0 ? `<div class="empty-state"><i class="bi bi-folder2-open"></i><h4>${repos.length ? 'No repositories match' : 'No repositories yet'}</h4></div>` :
+      <input type="text" id="repoFilter" class="form-control-custom" placeholder="Find a project..." style="margin-bottom:1.5rem;" onkeyup="renderRepos()" value="${q}">
+      ${filtered.length === 0 ? `<div class="empty-state"><i class="bi bi-folder2-open"></i><h4>${repos.length ? 'No projects match' : 'No projects yet'}</h4></div>` :
         filtered.map(r => {
           const openIssues = DB.getIssuesByRepo(r.id,'issue').filter(i=>i.state==='open').length;
           const openPRs = DB.getIssuesByRepo(r.id,'pr').filter(i=>i.state==='open').length;
@@ -639,8 +639,8 @@ function renderRepo() {
   const tabs = [
     { id:'issues', icon:'bi-circle-dot', label:'Issues', count: DB.getIssuesByRepo(repo.id,'issue').filter(i=>i.state==='open').length },
     { id:'prs', icon:'bi-git', label:'Pull Requests', count: DB.getIssuesByRepo(repo.id,'pr').filter(i=>i.state==='open').length },
-    { id:'boards', icon:'bi-kanban', label:'Projects' },
-    { id:'milestones', icon:'bi-signpost-2', label:'Milestones' },
+    { id:'boards', icon:'bi-kanban', label:'Boards' },
+    // { id:'milestones', icon:'bi-signpost-2', label:'Milestones' },
     { id:'labels', icon:'bi-tags', label:'Labels' },
     { id:'settings', icon:'bi-gear', label:'Settings' },
   ];
@@ -658,7 +658,7 @@ function renderRepo() {
   renderContent(`
     <!-- Repo Header -->
     <div style="display:flex; align-items:center; gap:.75rem; margin-bottom:1.5rem;">
-      <a onclick="navigate('repos')" style="color:var(--text-muted); cursor:pointer; font-size:13px;"><i class="bi bi-folder2"></i> Repositories</a>
+      <a onclick="navigate('repos')" style="color:var(--text-muted); cursor:pointer; font-size:13px;"><i class="bi bi-folder2"></i> Projects</a>
       <span style="color:var(--text-muted);">/</span>
       <span style="font-weight:600; font-size:15px;">${esc(repo.name)}</span>
       <span class="repo-visibility">${repo.visibility}</span>
@@ -1071,7 +1071,7 @@ function showLabelPicker(issue_id) {
 
   showModal('Apply Labels', `
     <div id="labelPickerList">
-      ${labels.length === 0 ? '<p style="color:var(--text-muted);">No labels in this repository. Create some in the Labels tab.</p>' :
+      ${labels.length === 0 ? '<p style="color:var(--text-muted);">No labels in this project. Create some in the Labels tab.</p>' :
         labels.map(l => `
           <label class="checkbox-label">
             <input type="checkbox" id="lbl_${l.id}" ${selected.has(l.id)?'checked':''}>
@@ -1289,7 +1289,7 @@ function renderBoards(repo) {
         <h2 style="font-size:1rem; font-weight:600; margin:0;">Project Boards</h2>
         <button class="btn-primary-custom" onclick="showNewBoardModal('${repo.id}')"><i class="bi bi-plus-lg"></i> New Board</button>
       </div>
-      ${boards.length === 0 ? `<div class="empty-state"><i class="bi bi-kanban"></i><h4>No project boards yet</h4><p>Create a board to track work with a Kanban workflow.</p></div>` :
+      ${boards.length === 0 ? `<div class="empty-state"><i class="bi bi-kanban"></i><h4>No board boards yet</h4><p>Create a board to track work with a Kanban workflow.</p></div>` :
         boards.map(b => `
           <div class="card-custom" style="margin-bottom:1rem; padding:1.25rem;">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:.75rem;">
@@ -1477,7 +1477,7 @@ function renderRepoSettings(repo) {
       <div class="card-custom" style="padding:1.5rem; margin-bottom:1.5rem;">
         <h3 style="font-size:1rem; font-weight:600; margin-bottom:1.25rem;">General Settings</h3>
         <div style="display:flex; flex-direction:column; gap:1rem;">
-          <div><label class="form-label-custom">Repository Name</label>
+          <div><label class="form-label-custom">Project Name</label>
             <input type="text" id="settingName" class="form-control-custom" value="${esc(repo.name)}"></div>
           <div><label class="form-label-custom">Description</label>
             <input type="text" id="settingDesc" class="form-control-custom" value="${esc(repo.description||'')}"></div>
@@ -1493,8 +1493,8 @@ function renderRepoSettings(repo) {
       </div>
       <div class="card-custom" style="padding:1.5rem; border-color:rgba(248,81,73,.3);">
         <h3 style="font-size:1rem; font-weight:600; margin-bottom:.5rem; color:var(--accent-red);">Danger Zone</h3>
-        <p style="color:var(--text-secondary); font-size:13px; margin-bottom:1rem;">Once you delete a repository, there is no going back. This will delete all issues, PRs, boards, milestones, and labels.</p>
-        <button class="btn-danger-custom" onclick="confirmDeleteRepo('${repo.id}')"><i class="bi bi-trash"></i> Delete Repository</button>
+        <p style="color:var(--text-secondary); font-size:13px; margin-bottom:1rem;">Once you delete a project, there is no going back. This will delete all issues, PRs, boards, milestones, and labels.</p>
+        <button class="btn-danger-custom" onclick="confirmDeleteRepo('${repo.id}')"><i class="bi bi-trash"></i> Delete Project</button>
       </div>
     </div>`;
 }
@@ -1516,10 +1516,10 @@ function saveRepoSettings(id) {
 // REPOS MODAL
 // ============================================================
 function showNewRepoModal() {
-  showModal('New Repository', `
+  showModal('New Project', `
     <div style="display:flex; flex-direction:column; gap:1rem;">
-      <div><label class="form-label-custom">Repository Name *</label>
-        <input type="text" id="repo_name" class="form-control-custom" placeholder="my-awesome-project" autofocus></div>
+      <div><label class="form-label-custom">Project Name *</label>
+        <input type="text" id="repo_name" class="form-control-custom" placeholder="my-awesome-board" autofocus></div>
       <div><label class="form-label-custom">Description</label>
         <input type="text" id="repo_desc" class="form-control-custom" placeholder="Short description (optional)"></div>
       <div><label class="form-label-custom">Default Branch</label>
@@ -1537,22 +1537,22 @@ function showNewRepoModal() {
   `, () => {
     const name = document.getElementById('repo_name').value.trim();
     if (!name) { toast('Name is required', 'error'); return; }
-    if (DB.repos().find(r => r.name === name)) { toast('A repository with this name already exists', 'error'); return; }
+    if (DB.repos().find(r => r.name === name)) { toast('A project with this name already exists', 'error'); return; }
     const repo = { id:uid(), name, description: document.getElementById('repo_desc').value, default_branch: document.getElementById('repo_branch').value.trim()||'main', visibility: document.getElementById('repo_vis').value, created_at: Date.now() };
     DB.saveRepo(repo);
     if (document.getElementById('repo_seed_labels').checked) {
       DEFAULT_LABELS.forEach(l => DB.saveLabel({ id:uid(), repo_id:repo.id, ...l }));
     }
-    DB.logActivity({ html:`<strong>${esc(DB.user().name)}</strong> created repository <strong>${esc(name)}</strong>`, icon:'bi-folder-plus', color:'var(--accent-blue)' });
-    toast('Repository created!');
+    DB.logActivity({ html:`<strong>${esc(DB.user().name)}</strong> created project <strong>${esc(name)}</strong>`, icon:'bi-folder-plus', color:'var(--accent-blue)' });
+    toast('Project created!');
     closeModal();
     navigate('repo', { repo_id: repo.id });
-  }, 'Create Repository', true);
+  }, 'Create Project', true);
 }
 
 function showEditRepoModal(id) {
   const r = DB.repos().find(x=>x.id===id);
-  showModal('Edit Repository', `
+  showModal('Edit Project', `
     <div style="display:flex; flex-direction:column; gap:1rem;">
       <div><label class="form-label-custom">Name *</label><input type="text" id="edit_repo_name" class="form-control-custom" value="${esc(r.name)}"></div>
       <div><label class="form-label-custom">Description</label><input type="text" id="edit_repo_desc" class="form-control-custom" value="${esc(r.description||'')}"></div>
@@ -1566,7 +1566,7 @@ function showEditRepoModal(id) {
     const name = document.getElementById('edit_repo_name').value.trim();
     if (!name) { toast('Name required', 'error'); return; }
     r.name = name; r.description = document.getElementById('edit_repo_desc').value; r.visibility = document.getElementById('edit_repo_vis').value;
-    DB.saveRepo(r); toast('Repository updated'); closeModal(); render();
+    DB.saveRepo(r); toast('Project updated'); closeModal(); render();
   }, 'Save Changes');
 }
 
@@ -1574,7 +1574,7 @@ function confirmDeleteRepo(id) {
   const r = DB.repos().find(x=>x.id===id);
   if (!confirm(`Delete "${r.name}"?\n\nThis will permanently delete all issues, PRs, boards, milestones, and labels. This cannot be undone.`)) return;
   DB.deleteRepo(id);
-  toast(`Repository "${r.name}" deleted`);
+  toast(`Project "${r.name}" deleted`);
   navigate('repos');
 }
 
@@ -1733,7 +1733,7 @@ function renderProfile() {
           </div>
         </div>
         <div style="display:flex; gap:1.5rem; margin-bottom:1.5rem;">
-          <span style="font-size:13px; color:var(--text-secondary);"><strong style="color:var(--text-primary);">${totalRepos}</strong> repositories</span>
+          <span style="font-size:13px; color:var(--text-secondary);"><strong style="color:var(--text-primary);">${totalRepos}</strong> projects</span>
           <span style="font-size:13px; color:var(--text-secondary);"><strong style="color:var(--text-primary);">${totalIssues}</strong> issues & PRs</span>
         </div>
         <div style="display:flex; flex-direction:column; gap:1rem;">
@@ -1769,7 +1769,7 @@ function saveProfile() {
   DB.saveUser(u); toast('Profile saved'); render();
 }
 function clearAllData() {
-  if (!confirm('Clear ALL data? This will delete all repositories, issues, and settings.')) return;
+  if (!confirm('Clear ALL data? This will delete all projects, issues, and settings.')) return;
   ['repos','issues','comments','milestones','labels','boards','activity','user'].forEach(k => localStorage.removeItem('ghpm_'+k));
   toast('All data cleared'); render();
 }
@@ -1795,7 +1795,7 @@ function renderSearch() {
     <div style="max-width:800px;">
       <h1 style="font-size:1.3rem; font-weight:700; margin-bottom:1.5rem;">Search results for "<span style="color:var(--accent-blue);">${esc(q)}</span>"</h1>
       ${repos.length > 0 ? `
-        <h2 style="font-size:.9rem; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted); margin-bottom:.75rem;">Repositories (${repos.length})</h2>
+        <h2 style="font-size:.9rem; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted); margin-bottom:.75rem;">Projects (${repos.length})</h2>
         ${repos.map(r=>`<div class="repo-card" onclick="navigate('repo',{repo_id:'${r.id}'})">
           <div class="repo-name">${hl(r.name)}</div>
           ${r.description?`<div class="repo-desc">${hl(r.description)}</div>`:''}
@@ -1906,8 +1906,8 @@ function seedDemoData() {
   DB.logActivity({ html:`<strong>${esc(user.name)}</strong> merged PR <strong>#5</strong>`, icon:'bi-git', color:'var(--accent-purple)' });
   DB.logActivity({ html:`<strong>${esc(user.name)}</strong> opened PR <strong>#4 Fix: redirect after login</strong>`, icon:'bi-git', color:'var(--accent-green)' });
   DB.logActivity({ html:`<strong>${esc(user.name)}</strong> created board <strong>Sprint 1</strong>`, icon:'bi-kanban', color:'var(--accent-orange)' });
-  DB.logActivity({ html:`<strong>${esc(user.name)}</strong> created repository <strong>api-server</strong>`, icon:'bi-folder-plus', color:'var(--accent-blue)' });
-  DB.logActivity({ html:`<strong>${esc(user.name)}</strong> created repository <strong>web-app</strong>`, icon:'bi-folder-plus', color:'var(--accent-blue)' });
+  DB.logActivity({ html:`<strong>${esc(user.name)}</strong> created project <strong>api-server</strong>`, icon:'bi-folder-plus', color:'var(--accent-blue)' });
+  DB.logActivity({ html:`<strong>${esc(user.name)}</strong> created project <strong>web-app</strong>`, icon:'bi-folder-plus', color:'var(--accent-blue)' });
 }
 
 // ============================================================
