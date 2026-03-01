@@ -1111,19 +1111,15 @@
         <a class="sidebar-link" id="nav-dashboard" onclick="navigate('dashboard')"><i class="bi bi-grid-1x2"></i>
           Dashboard</a>
         <a class="sidebar-link" id="nav-repos" onclick="navigate('repos')"><i class="bi bi-folder2"></i> Projects</a>
-        <a class="sidebar-link" id="nav-issues" onclick="navigate('myissues')"><i class="bi bi-circle-dot"></i> My
+        <a class="sidebar-link" id="nav-issues" onclick="navigate('myissues')"><i class="bi bi-exclamation-diamond"></i> My
           Issues</a>
-        <a class="sidebar-link" id="nav-prs" onclick="navigate('myprs')"><i class="bi bi-git"></i> Pull Requests</a>
       </div>
       <div class="sidebar-section" id="repoNavSection" style="display:none;">
         <div class="sidebar-label" id="repoNavLabel">Project</div>
         <a class="sidebar-link" id="nav-repo-issues" onclick="navigateRepoTab('issues')"><i
-            class="bi bi-circle-dot"></i> Issues <span class="badge badge-count" id="nav-count-issues">0</span></a>
-        <a class="sidebar-link" id="nav-repo-prs" onclick="navigateRepoTab('prs')"><i class="bi bi-git"></i> Pull
-          Requests <span class="badge badge-count" id="nav-count-prs">0</span></a>
+            class="bi bi-exclamation-diamond"></i> Issues <span class="badge badge-count" id="nav-count-issues">0</span></a>
         <a class="sidebar-link" id="nav-repo-boards" onclick="navigateRepoTab('boards')"><i class="bi bi-kanban"></i>
           Project Boards</a>
-        <!-- <a class="sidebar-link" id="nav-repo-milestones" onclick="navigateRepoTab('milestones')"><i class="bi bi-signpost-2"></i> Milestones</a> -->
         <a class="sidebar-link" id="nav-repo-labels" onclick="navigateRepoTab('labels')"><i class="bi bi-tags"></i>
           Labels</a>
         <a class="sidebar-link" id="nav-repo-settings" onclick="navigateRepoTab('settings')"><i class="bi bi-gear"></i>
@@ -1368,7 +1364,6 @@
       if (state.view === 'dashboard') document.getElementById('nav-dashboard')?.classList.add('active');
       if (state.view === 'repos') document.getElementById('nav-repos')?.classList.add('active');
       if (state.view === 'myissues') document.getElementById('nav-issues')?.classList.add('active');
-      if (state.view === 'myprs') document.getElementById('nav-prs')?.classList.add('active');
 
       const repoSec = document.getElementById('repoNavSection');
       if (state.repo_id && (state.view === 'repo' || state.view === 'issue')) {
@@ -1376,11 +1371,9 @@
         const repo = DB.repos().find(r => r.id === state.repo_id);
         if (repo) document.getElementById('repoNavLabel').textContent = repo.name;
         const issues = DB.getIssuesByRepo(state.repo_id, 'issue').filter(i => i.state === 'open');
-        const prs = DB.getIssuesByRepo(state.repo_id, 'pr').filter(i => i.state === 'open');
         document.getElementById('nav-count-issues').textContent = issues.length;
-        document.getElementById('nav-count-prs').textContent = prs.length;
         if (state.view === 'repo') {
-          const tabMap = { issues: 'nav-repo-issues', prs: 'nav-repo-prs', boards: 'nav-repo-boards', milestones: 'nav-repo-milestones', labels: 'nav-repo-labels', settings: 'nav-repo-settings' };
+          const tabMap = { issues: 'nav-repo-issues', boards: 'nav-repo-boards', milestones: 'nav-repo-milestones', labels: 'nav-repo-labels', settings: 'nav-repo-settings' };
           document.getElementById(tabMap[state.repo_tab])?.classList.add('active');
         }
       } else { repoSec.style.display = 'none'; }
@@ -1398,7 +1391,6 @@
         case 'repo': renderRepo(); break;
         case 'issue': renderIssueDetail(); break;
         case 'myissues': renderMyIssues(); break;
-        case 'myprs': renderMyPRs(); break;
         case 'profile': renderProfile(); break;
         case 'search': renderSearch(); break;
         default: renderDashboard();
@@ -1420,7 +1412,6 @@
       const repos = DB.repos();
       const issues = DB.issues();
       const openIssues = issues.filter(i => i.type === 'issue' && i.state === 'open').length;
-      const openPRs = issues.filter(i => i.type === 'pr' && i.state === 'open').length;
       const closedIssues = issues.filter(i => i.type === 'issue' && i.state === 'closed').length;
       const activity = DB.activity().slice(0, 15);
 
@@ -1432,18 +1423,14 @@
       </div>
 
       <!-- Stats -->
-      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:2rem;">
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:2rem;">
         <div class="stat-card clickable" onclick="navigate('repos')">
           <div class="stat-value" style="color:var(--accent-blue)">${repos.length}</div>
           <div class="stat-label"><i class="bi bi-folder2"></i> Projects</div>
         </div>
         <div class="stat-card clickable" onclick="navigate('myissues')">
           <div class="stat-value" style="color:var(--accent-green)">${openIssues}</div>
-          <div class="stat-label"><i class="bi bi-circle-dot"></i> Open Issues</div>
-        </div>
-        <div class="stat-card clickable" onclick="navigate('myprs')">
-          <div class="stat-value" style="color:var(--accent-purple)">${openPRs}</div>
-          <div class="stat-label"><i class="bi bi-git"></i> Open PRs</div>
+          <div class="stat-label"><i class="bi bi-exclamation-diamond"></i> Open Issues</div>
         </div>
         <div class="stat-card">
           <div class="stat-value" style="color:var(--accent-red)">${closedIssues}</div>
@@ -1474,7 +1461,7 @@
                 </div>
                 ${r.description ? `<div class="repo-desc">${esc(r.description)}</div>` : ''}
                 <div class="repo-meta">
-                  <span><i class="bi bi-circle-dot"></i> ${rIssues.length} issues</span>
+                  <span><i class="bi bi-exclamation-diamond"></i> ${rIssues.length} issues</span>
                   <span><i class="bi bi-git"></i> ${rPRs.length} PRs</span>
                   <span><i class="bi bi-clock"></i> ${fmt(r.created_at)}</span>
                 </div>
@@ -1537,7 +1524,7 @@
             </div>
             ${r.description ? `<div class="repo-desc">${esc(r.description)}</div>` : ''}
             <div class="repo-meta">
-              <span><i class="bi bi-circle-dot"></i> ${openIssues} open issues</span>
+              <span><i class="bi bi-exclamation-diamond"></i> ${openIssues} open issues</span>
               <span><i class="bi bi-git"></i> ${openPRs} open PRs</span>
               <span><i class="bi bi-kanban"></i> ${boards} boards</span>
               <span style="margin-left:auto;"><i class="bi bi-calendar3"></i> ${new Date(r.created_at).toLocaleDateString()}</span>
@@ -1556,10 +1543,8 @@
       if (!repo) { navigate('repos'); return; }
 
       const tabs = [
-        { id: 'issues', icon: 'bi-circle-dot', label: 'Issues', count: DB.getIssuesByRepo(repo.id, 'issue').filter(i => i.state === 'open').length },
-        { id: 'prs', icon: 'bi-git', label: 'Pull Requests', count: DB.getIssuesByRepo(repo.id, 'pr').filter(i => i.state === 'open').length },
+        { id: 'issues', icon: 'bi-exclamation-diamond', label: 'Issues', count: DB.getIssuesByRepo(repo.id, 'issue').filter(i => i.state === 'open').length },
         { id: 'boards', icon: 'bi-kanban', label: 'Boards' },
-        // { id:'milestones', icon:'bi-signpost-2', label:'Milestones' },
         { id: 'labels', icon: 'bi-tags', label: 'Labels' },
         { id: 'settings', icon: 'bi-gear', label: 'Settings' },
       ];
@@ -1567,7 +1552,6 @@
       let tabContent = '';
       switch (state.repo_tab) {
         case 'issues': tabContent = renderIssueList(repo, 'issue'); break;
-        case 'prs': tabContent = renderIssueList(repo, 'pr'); break;
         case 'boards': tabContent = renderBoards(repo); break;
         case 'milestones': tabContent = renderMilestones(repo); break;
         case 'labels': tabContent = renderLabels(repo); break;
@@ -1598,7 +1582,7 @@
     // ============================================================
     function renderIssueList(repo, type) {
       const isIssue = type === 'issue';
-      const icon = isIssue ? 'bi-circle-dot' : 'bi-git';
+      const icon = isIssue ? 'bi-exclamation-diamond' : 'bi-git';
       const noun = isIssue ? 'issue' : 'pull request';
 
       // Read filter state from DOM or defaults
@@ -1713,7 +1697,7 @@
         else if (isOpen) { stateIcon = 'bi-git'; stateColor = 'var(--accent-green)'; }
         else { stateIcon = 'bi-git'; stateColor = 'var(--accent-red)'; }
       } else {
-        stateIcon = isOpen ? 'bi-circle-dot' : 'bi-check-circle-fill';
+        stateIcon = isOpen ? 'bi-exclamation-diamond' : 'bi-check-circle-fill';
         stateColor = isOpen ? 'var(--accent-green)' : 'var(--text-muted)';
       }
 
@@ -1759,7 +1743,7 @@
         else if (issue.state === 'open') stateBadge = `<span class="issue-state-badge state-open"><i class="bi bi-git"></i> Open</span>`;
         else stateBadge = `<span class="issue-state-badge state-closed"><i class="bi bi-git"></i> Closed</span>`;
       } else {
-        if (issue.state === 'open') stateBadge = `<span class="issue-state-badge state-open"><i class="bi bi-circle-dot"></i> Open</span>`;
+        if (issue.state === 'open') stateBadge = `<span class="issue-state-badge state-open"><i class="bi bi-exclamation-diamond"></i> Open</span>`;
         else stateBadge = `<span class="issue-state-badge state-closed"><i class="bi bi-check-circle-fill"></i> Closed</span>`;
       }
 
@@ -1768,7 +1752,7 @@
     <div style="display:flex; align-items:center; gap:.5rem; margin-bottom:1.5rem; flex-wrap:wrap;">
       <a onclick="navigate('repos')" style="color:var(--text-muted); cursor:pointer; font-size:13px;">${esc(repo?.name || '')}</a>
       <span style="color:var(--text-muted);">/</span>
-      <a onclick="navigate('repo',{repo_id:'${repo?.id}', repo_tab:'${isPR ? 'prs' : 'issues'}'})" style="color:var(--text-muted); cursor:pointer; font-size:13px;">${isPR ? 'Pull Requests' : 'Issues'}</a>
+      <a onclick="navigate('repo',{repo_id:'${repo?.id}', repo_tab:'issues'})" style="color:var(--text-muted); cursor:pointer; font-size:13px;">${isPR ? 'Pull Requests' : 'Issues'}</a>
       <span style="color:var(--text-muted);">/</span>
       <span style="font-size:13px;">#${issue.number}</span>
     </div>
@@ -1928,7 +1912,7 @@
       if (!issue) return;
       issue.state = 'open'; issue.closed_at = null; issue.updated_at = Date.now();
       DB.saveIssue(issue);
-      DB.logActivity({ html: `<strong>${esc(DB.user().name)}</strong> reopened <strong>#${issue.number}</strong> ${esc(issue.title)}`, icon: 'bi-circle-dot', color: 'var(--accent-green)' });
+      DB.logActivity({ html: `<strong>${esc(DB.user().name)}</strong> reopened <strong>#${issue.number}</strong> ${esc(issue.title)}`, icon: 'bi-exclamation-diamond', color: 'var(--accent-green)' });
       toast('Reopened');
       render();
     }
@@ -1947,7 +1931,7 @@
       if (!confirm(`Delete this ${issue.type === 'pr' ? 'pull request' : 'issue'}? This cannot be undone.`)) return;
       DB.deleteIssue(id);
       toast('Deleted');
-      navigate('repo', { repo_id: issue.repo_id, repo_tab: issue.type === 'pr' ? 'prs' : 'issues' });
+      navigate('repo', { repo_id: issue.repo_id, repo_tab: 'issues' });
     }
     function setMilestone(issue_id, milestone_id) {
       const issue = DB.issues().find(i => i.id === issue_id);
@@ -2294,7 +2278,7 @@
                 onclick="navigate('issue',{repo_id:'${board.repo_id}',issue_id:'${issue.id}'})">
                 <div class="kanban-card-title">${esc(issue.title)}</div>
                 <div class="kanban-card-meta">
-                  <i class="bi ${isPR ? 'bi-git' : 'bi-circle-dot'}" style="color:${color}"></i>
+                  <i class="bi ${isPR ? 'bi-git' : 'bi-exclamation-diamond'}" style="color:${color}"></i>
                   #${issue.number}
                   ${issue.labels?.length ? `<i class="bi bi-tag" style="margin-left:.3rem;"></i>` : ''}
                 </div>
@@ -2561,7 +2545,7 @@
           ...(type === 'pr' ? { head_branch: document.getElementById('ni_head')?.value.trim() || '', base_branch: document.getElementById('ni_base')?.value.trim() || 'main', merged: false } : {})
         };
         DB.saveIssue(issue);
-        DB.logActivity({ html: `<strong>${esc(user.name)}</strong> opened ${type} <strong>#${issue.number} ${esc(title)}</strong>`, icon: type === 'pr' ? 'bi-git' : 'bi-circle-dot', color: 'var(--accent-green)' });
+        DB.logActivity({ html: `<strong>${esc(user.name)}</strong> opened ${type} <strong>#${issue.number} ${esc(title)}</strong>`, icon: type === 'pr' ? 'bi-git' : 'bi-exclamation-diamond', color: 'var(--accent-green)' });
         toast(`${isIssue ? 'Issue' : 'Pull request'} created!`);
         closeModal();
         navigate('issue', { repo_id, issue_id: issue.id });
@@ -2583,56 +2567,21 @@
       <h1 style="font-size:1.4rem; font-weight:700; margin-bottom:1.5rem;">My Issues</h1>
       <div style="display:flex; gap:.5rem; margin-bottom:1rem;">
         <button class="filter-btn ${filterState === 'open' ? 'active' : ''}" onclick="window._myFilter='open'; render()">
-          <i class="bi bi-circle-dot" style="color:var(--accent-green)"></i> ${allIssues.filter(i => i.state === 'open').length} Open
+          <i class="bi bi-exclamation-diamond" style="color:var(--accent-green)"></i> ${allIssues.filter(i => i.state === 'open').length} Open
         </button>
         <button class="filter-btn ${filterState === 'closed' ? 'active' : ''}" onclick="window._myFilter='closed'; render()">
           <i class="bi bi-check-circle"></i> ${allIssues.filter(i => i.state === 'closed').length} Closed
         </button>
       </div>
       <div class="card-custom">
-        ${filtered.length === 0 ? `<div class="empty-state"><i class="bi bi-circle-dot"></i><h4>No ${filterState} issues</h4></div>` :
+        ${filtered.length === 0 ? `<div class="empty-state"><i class="bi bi-exclamation-diamond"></i><h4>No ${filterState} issues</h4></div>` :
           filtered.map(issue => {
             const repo = repos.find(r => r.id === issue.repo_id);
             return `<div class="issue-item" onclick="navigate('issue',{repo_id:'${issue.repo_id}',issue_id:'${issue.id}'})">
-              <i class="bi bi-circle-dot issue-icon" style="color:${issue.state === 'open' ? 'var(--accent-green)' : 'var(--text-muted)'};"></i>
+              <i class="bi bi-exclamation-diamond issue-icon" style="color:${issue.state === 'open' ? 'var(--accent-green)' : 'var(--text-muted)'};"></i>
               <div style="flex:1;">
                 <div class="issue-title"><span style="color:var(--text-muted); font-size:12px;">${esc(repo?.name || '')} / </span>${esc(issue.title)}</div>
                 <div class="issue-meta">#${issue.number} · ${fmt(issue.created_at)}</div>
-              </div>
-            </div>`;
-          }).join('')}
-      </div>
-    </div>
-  `);
-    }
-
-    function renderMyPRs() {
-      const allPRs = DB.issues().filter(i => i.type === 'pr');
-      const repos = DB.repos();
-      const filterState = window._myPRFilter || 'open';
-      const filtered = allPRs.filter(i => i.state === filterState);
-
-      renderContent(`
-    <div style="max-width:860px;">
-      <h1 style="font-size:1.4rem; font-weight:700; margin-bottom:1.5rem;">Pull Requests</h1>
-      <div style="display:flex; gap:.5rem; margin-bottom:1rem;">
-        <button class="filter-btn ${filterState === 'open' ? 'active' : ''}" onclick="window._myPRFilter='open'; render()">
-          <i class="bi bi-git" style="color:var(--accent-green)"></i> ${allPRs.filter(i => i.state === 'open').length} Open
-        </button>
-        <button class="filter-btn ${filterState === 'closed' ? 'active' : ''}" onclick="window._myPRFilter='closed'; render()">
-          <i class="bi bi-git"></i> ${allPRs.filter(i => i.state === 'closed').length} Closed
-        </button>
-      </div>
-      <div class="card-custom">
-        ${filtered.length === 0 ? `<div class="empty-state"><i class="bi bi-git"></i><h4>No ${filterState} pull requests</h4></div>` :
-          filtered.map(issue => {
-            const repo = repos.find(r => r.id === issue.repo_id);
-            const color = issue.merged ? 'var(--accent-purple)' : issue.state === 'open' ? 'var(--accent-green)' : 'var(--accent-red)';
-            return `<div class="issue-item" onclick="navigate('issue',{repo_id:'${issue.repo_id}',issue_id:'${issue.id}'})">
-              <i class="bi bi-git issue-icon" style="color:${color};"></i>
-              <div style="flex:1;">
-                <div class="issue-title"><span style="color:var(--text-muted); font-size:12px;">${esc(repo?.name || '')} / </span>${esc(issue.title)}</div>
-                <div class="issue-meta">#${issue.number} · ${esc(issue.head_branch || '')} → ${esc(issue.base_branch || 'main')} · ${fmt(issue.created_at)} ${issue.merged ? '· <span style="color:var(--accent-purple)">merged</span>' : ''}</div>
               </div>
             </div>`;
           }).join('')}
@@ -2736,7 +2685,7 @@
           ${issues.map(i => {
         const r = DB.repos().find(x => x.id === i.repo_id);
         return `<div class="issue-item" onclick="navigate('issue',{repo_id:'${i.repo_id}',issue_id:'${i.id}'})">
-              <i class="bi ${i.type === 'pr' ? 'bi-git' : 'bi-circle-dot'} issue-icon" style="color:${i.state === 'open' ? 'var(--accent-green)' : 'var(--text-muted)'}"></i>
+              <i class="bi ${i.type === 'pr' ? 'bi-git' : 'bi-exclamation-diamond'} issue-icon" style="color:${i.state === 'open' ? 'var(--accent-green)' : 'var(--text-muted)'}"></i>
               <div>
                 <div class="issue-title">${r ? `<span style="color:var(--text-muted); font-size:12px;">${esc(r.name)} / </span>` : ''}${hl(i.title)}</div>
                 <div class="issue-meta">#${i.number} · ${i.state} · ${fmt(i.created_at)}</div>
@@ -2846,7 +2795,6 @@
     // ============================================================
     // INIT
     // ============================================================
-    // seedDemoData();
     render();
   </script>
 </body>
